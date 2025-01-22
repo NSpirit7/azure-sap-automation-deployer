@@ -4,6 +4,19 @@ on:
   issues:
     types: [ opened ]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment name"
+        required: true
+        default: "MGMT"
+      region:
+        description: "Deployment region"
+        required: true
+        default: "westeurope"
+      deployer_vnet:
+        description: "Deployer VNet"
+        required: true
+        default: "DEP01"
 
 permissions:
   issues: write
@@ -24,7 +37,7 @@ jobs:
         with:
           application_id: ${{ secrets.APPLICATION_ID }}
           application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
-          organization: ${{ github.repository_owner }}
+          #organization: ${{ github.repository_owner }}
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -90,22 +103,13 @@ jobs:
           git config --global --add safe.directory ${GITHUB_WORKSPACE}
           git config --global user.name "GitHub Actions"
           git config --global user.email "sap-automation-deployer@noreply.github.com"
-          
+
           git add WORKSPACES
           git add .github/workflows/issue-closed.yaml
-          
+
           git commit -m "Add configuration for ${environment} in ${region}"
           git push
 
           # Now update the deployment workflow with the deployer and library
           .github/workflows/scripts/update-workflow-on-workspaces-changes.sh
 
-      - name: Close issue
-        run: |
-          new_issue=$(cat .github/workflows/templates/link-azure.tpl | sed "s|@@REPO@@|${{ github.server_url }}/${{ github.repository }}|g" | \
-          gh issue create -t "Link Azure to GitHub" -F - -l link-azure)
-
-          gh issue close ${{ github.event.issue.number }}
-          gh issue comment ${{ github.event.issue.number }} --body "Environment created. The only thing left is add the information required to connect to Azure. I created a [new issue for you to fill in the required information](${new_issue})."
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -40,7 +40,7 @@ jobs:
     environment: ${{ inputs.deployer }}
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/xpiritbv/azure-sap-automation:github-workflow
+      image: ghcr.io/nnoaman/sap-automation:github_actions
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
@@ -86,12 +86,18 @@ jobs:
     needs: setup_deployer
     runs-on: self-hosted
     container:
-      image: ghcr.io/xpiritbv/azure-sap-automation:github-workflow
+      image: ghcr.io/nnoaman/sap-automation:github_actions
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Update to latest changes
+        run: |
+          git config --global --add safe.directory ${GITHUB_WORKSPACE}
+          git fetch origin
+          git reset --hard origin/${GITHUB_REF##*/}
 
       # Required permissions: org level runner registration permissions
       - name: Get app token
@@ -139,7 +145,7 @@ jobs:
     needs: deploy_controlplane
     runs-on: self-hosted
     container:
-      image: ghcr.io/xpiritbv/azure-sap-automation:github-workflow
+      image: ghcr.io/nnoaman/sap-automation:github_actions
     steps:
       - name: Azure Login
         uses: Azure/Login@v2

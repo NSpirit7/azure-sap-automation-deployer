@@ -1,6 +1,8 @@
 name: 'Initial Setup'
 
-on: [ create ]
+#on: [ create ]
+
+on: workflow_dispatch
 
 permissions:
   issues: write

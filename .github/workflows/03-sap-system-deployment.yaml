@@ -35,7 +35,7 @@ jobs:
       image: ghcr.io/nnoaman/sap-automation:github_actions
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout the code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0

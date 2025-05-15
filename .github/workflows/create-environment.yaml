@@ -97,5 +97,5 @@ jobs:
           git commit -m "Add configuration for ${environment} in ${region}"
           git push
 
-          # Now update the deployment workflow with the deployer and library
-          .github/workflows/scripts/update-workflow-on-workspaces-changes.sh
+          # # Now update the deployment workflow with the deployer and library
+          # .github/workflows/scripts/update-workflow-on-workspaces-changes.sh

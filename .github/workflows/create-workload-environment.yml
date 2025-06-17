@@ -110,3 +110,4 @@ jobs:
           # Set variables
           gh variable set APPLICATION_CONFIGURATION_NAME --body "${{ vars.APPLICATION_CONFIGURATION_NAME }}" --env ${workload_config_environment_name}
           gh variable set DEPLOYER_KEYVAULT --body "${{ vars.DEPLOYER_KEYVAULT }}" --env ${workload_config_environment_name}
+          gh variable set CONTROL_PLANE_NAME --body "${{ vars.CONTROL_PLANE_NAME }}" --env ${workload_config_environment_name}

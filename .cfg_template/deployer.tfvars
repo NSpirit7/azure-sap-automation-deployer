@@ -114,7 +114,7 @@ management_bastion_subnet_address_prefix = "10.170.20.128/26"
 #########################################################################################
 
 # use_webapp is a boolean flag controlling if configuration Web App is to be deployed in the deployer VNet
-use_webapp = false
+#use_webapp = false
 
 # webapp_subnet_arm_id is an optional parameter that if provided specifies Azure resource
 # identifier for the existing  subnet
@@ -177,7 +177,7 @@ deployer_image = {
 #deployer_authentication_type="key"
 
 # use_spn defines if the deployments are performed using Service Principals or the deployer's managed identiry, true=SPN, false=MSI
-use_spn = true
+#use_spn = true
 
 # user_assigned_identity_id defines the user assigned identity that will be assigned to the deployers
 #user_assigned_identity_id="/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/XXXXXXXX/providers/Microsoft.ManagedIdentity/userAssignedIdentities/xxxxxxxxxx"
@@ -185,7 +185,7 @@ use_spn = true
 
 #########################################################################################
 #                                                                                       #
-#                            Key Vault information                                    #
+#                            Key Vault information                                      #
 #                                                                                       #
 #########################################################################################
 

@@ -112,3 +112,4 @@ jobs:
           gh variable set DEPLOYER_KEYVAULT --body "${{ vars.DEPLOYER_KEYVAULT }}" --env ${workload_config_environment_name}
           gh variable set CONTROL_PLANE_NAME --body "${{ vars.CONTROL_PLANE_NAME }}" --env ${workload_config_environment_name}
           gh variable set USE_MSI --body "${{ vars.USE_MSI }}" --env ${workload_config_environment_name}
+          gh variable set MSI_ID --body "${{ vars.MSI_ID }}" --env ${workload_config_environment_name}

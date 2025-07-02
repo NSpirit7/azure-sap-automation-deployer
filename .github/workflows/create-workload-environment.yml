@@ -1,43 +1,43 @@
-name: Create workload environment
+name:                                        Create workload environment
 
 on:
   workflow_dispatch:
     inputs:
       control_plane_name:
-        description: "Control Plane Name configuration name, use the following syntax: ENV-LOCA-VNET"
-        required: true
-        type: environment
+        description:                         "Control Plane Name configuration name, use the following syntax: ENV-LOCA-VNET"
+        required:                            true
+        type:                                environment
       workload_environment:
-        description: "Workload environment (DEV, QA, PRD, ...)"
-        required: true
-        type: string
-        default: TEST
+        description:                         "Workload environment (DEV, QA, PRD, ...)"
+        required:                            true
+        type:                                string
+        default:                             TEST
       region:
-        description: "Azure region to deploy the workload environment to. Use the short name, e.g. `westeurope`."
-        required: true
-        type: string
-        default: westeurope
+        description:                         "Azure region to deploy the workload environment to. Use the short name, e.g. `westeurope`."
+        required:                            true
+        type:                                string
+        default:                             westeurope
       workload_vnet:
-        description: "Workload VNet name"
-        required: true
-        type: string
-        default: SAP01
+        description:                         "Workload VNet name"
+        required:                            true
+        type:                                string
+        default:                             SAP01
 
 permissions:
-  issues: write
-  contents: write
-  actions: write
+  issues:                                    write
+  contents:                                  write
+  actions:                                   write
 
 jobs:
   create_workload_environment:
-    name: Create workload environment
-    environment: ${{ inputs.control_plane_name }}
-    runs-on: ubuntu-latest
+    name:                                    Create workload environment
+    environment:                             ${{ inputs.control_plane_name }}
+    runs-on:                                 ubuntu-latest
     container:
-      image: ghcr.io/nnoaman/sap-automation:github_actions
+      image:                                 ghcr.io/nnoaman/sap-automation:github_actions
     steps:
-      - name: Upgrade GitHub CLI
-        run: |
+      - name:                                Upgrade GitHub CLI
+        run:                                 |
           echo "Checking current gh version..."
           gh --version
           echo "Upgrading GitHub CLI..."
@@ -47,23 +47,23 @@ jobs:
           echo "Updated gh version:"
           gh --version
 
-      - name: Get app token
-        id: get_workflow_token
-        uses: peter-murray/workflow-application-token-action@v3
+      - name:                                Get app token
+        id:                                  get_workflow_token
+        uses:                                peter-murray/workflow-application-token-action@v3
         with:
-          application_id: ${{ secrets.APPLICATION_ID }}
-          application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
-          #organization: ${{ github.repository_owner }}
+          application_id:                    ${{ secrets.APPLICATION_ID }}
+          application_private_key:           ${{ secrets.APPLICATION_PRIVATE_KEY }}
+          #organization:                     ${{ github.repository_owner }}
 
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name:                                Checkout
+        uses:                                actions/checkout@v4
         with:
-          token: ${{ steps.get_workflow_token.outputs.token }}
+          token:                             ${{ steps.get_workflow_token.outputs.token }}
 
-      - name: Create GitHub Workload Environment
+      - name:                                Create GitHub Workload Environment
         env:
-          GH_TOKEN: ${{ steps.get_workflow_token.outputs.token }}
-        run: |
+          GH_TOKEN:                          ${{ steps.get_workflow_token.outputs.token }}
+        run:                                 |
           environment=${{ inputs.workload_environment }}
           region=${{ inputs.region }}
           workload_vnet=${{ inputs.workload_vnet }}
@@ -101,13 +101,14 @@ jobs:
           git push
 
           # Set secrets
-          gh secret set ARM_CLIENT_ID --body "${{ secrets.AZURE_CLIENT_ID }}" --env ${workload_config_environment_name}
           gh secret set ARM_CLIENT_SECRET --body "${{ secrets.AZURE_CLIENT_SECRET }}" --env ${workload_config_environment_name}
-          gh secret set ARM_SUBSCRIPTION_ID --body "${{ secrets.AZURE_SUBSCRIPTION_ID }}" --env ${workload_config_environment_name}
-          gh secret set ARM_TENANT_ID --body "${{ secrets.AZURE_TENANT_ID }}" --env ${workload_config_environment_name}
-          gh secret set ARM_OBJECT_ID --body "${{ secrets.AZURE_OBJECT_ID }}" --env ${workload_config_environment_name}
 
           # Set variables
+          gh variable set ARM_CLIENT_ID --body "${{ vars.AZURE_CLIENT_ID }}" --env ${workload_config_environment_name}
+          gh variable set ARM_SUBSCRIPTION_ID --body "${{ vars.AZURE_SUBSCRIPTION_ID }}" --env ${workload_config_environment_name}
+          gh variable set ARM_TENANT_ID --body "${{ vars.AZURE_TENANT_ID }}" --env ${workload_config_environment_name}
+          gh variable set ARM_OBJECT_ID --body "${{ vars.AZURE_OBJECT_ID }}" --env ${workload_config_environment_name}
           gh variable set APPLICATION_CONFIGURATION_NAME --body "${{ vars.APPLICATION_CONFIGURATION_NAME }}" --env ${workload_config_environment_name}
           gh variable set DEPLOYER_KEYVAULT --body "${{ vars.DEPLOYER_KEYVAULT }}" --env ${workload_config_environment_name}
           gh variable set CONTROL_PLANE_NAME --body "${{ vars.CONTROL_PLANE_NAME }}" --env ${workload_config_environment_name}
+          gh variable set USE_MSI --body "${{ vars.USE_MSI }}" --env ${workload_config_environment_name}

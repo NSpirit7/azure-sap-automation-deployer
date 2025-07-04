@@ -5,8 +5,8 @@
   # |                                                                            |
   # +------------------------------------4--------------------------------------*/
 
-  name: Application Tier Installation
-  run-name: Application Tier Installation by @${{ github.actor }}
+  name: 6.1 - Operating System Preparation
+  run-name: Operating System Preparation by @${{ github.actor }}
 
   on:
     workflow_dispatch:
@@ -66,18 +66,18 @@
           description: "Extra Parameters"
           type: string
           default: " "
-        pas_installation:
-          description: "Primary Application Server Installation"
+        base_os_configuration:
+          description: "Core Operating System Configuration"
           type: boolean
           default: true
-        application_server_installation:
-          description: "Additional Application Server Installation"
+        sap_os_configuration:
+          description: "SAP Operating System Configuration"
           type: boolean
           default: true
-        webdispatcher_installation:
-          description: "Web Dispatcher Installation"
+        bom_processing:
+          description: "Local Software Download"
           type: boolean
-          default: false
+          default: true
         post_configuration_actions:
           description: "Post Configuration Actions"
           type: boolean
@@ -95,8 +95,8 @@
     USE_MSI: false
 
   jobs:
-    application_tier_installation:
-      name: Application Tier Installation
+    operating_system_preparation:
+      name: Operating System Preparation
       environment: ${{ inputs.workload_zone_name }}
       runs-on: self-hosted
       container:
@@ -150,6 +150,16 @@
             EXTRA_PARAMETERS: ${{ inputs.EXTRA_PARAMS }}
             USE_MSI: ${{ env.USE_MSI }}
 
+        - name: Install Ansible Collections
+          run: |
+            ansible-galaxy collection install ansible.windows --force
+            ansible-galaxy collection install ansible.posix --force
+            ansible-galaxy collection install ansible.utils --force
+            ansible-galaxy collection install ansible.netcommon:5.1.2 --force
+            ansible-galaxy collection install community.windows --force
+            ansible-galaxy collection install community.general --force
+            ansible-galaxy collection install microsoft.ad --force
+
         - name: Parameter Validation
           uses: ./.github/actions/run-ansible
           with:
@@ -174,17 +184,17 @@
             azureTenantId: ${{ secrets.ARM_TENANT_ID }}
             azureSubscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-        - name: Primary Application Server Installation
-          if: ${{ github.event.inputs.pas_installation == 'true' }}
+        - name: Core OS Configuration
+          if: ${{ github.event.inputs.base_os_configuration == 'true' }}
           uses: ./.github/actions/run-ansible
           with:
-            displayName: "Primary Application Server Installation"
+            displayName: "Operating System Configuration"
             SAP_AUTOMATION_REPO_PATH: ${{ env.SAP_AUTOMATION_REPO_PATH }}
             APPLICATION_CONFIGURATION_NAME: ${{ vars.APPLICATION_CONFIGURATION_NAME }}
             CONTROL_PLANE_SUBSCRIPTION_ID: ${{ steps.preparation.outputs.CP_SUBSCRIPTION }}
             CONTROL_PLANE_NAME: ${{ vars.CONTROL_PLANE_NAME }}
             USE_MSI: ${{ env.USE_MSI }}
-            ansibleFilePath: ${{ env.SAP_AUTOMATION_REPO_PATH }}/deploy/ansible/playbook_05_02_sap_pas_install.yaml
+            ansibleFilePath: ${{ env.SAP_AUTOMATION_REPO_PATH }}/deploy/ansible/playbook_01_os_base_config.yaml
             ansibleConfigPath: ${{ env.SAP_AUTOMATION_REPO_PATH }}/deploy/ansible/ansible.cfg
             secretName: ${{ steps.preparation.outputs.SSH_KEY_NAME }}
             passwordSecretName: ${{ steps.preparation.outputs.PASSWORD_KEY_NAME }}
@@ -199,17 +209,17 @@
             azureTenantId: ${{ secrets.ARM_TENANT_ID }}
             azureSubscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-        - name: Additional Application Server Installation
-          if: ${{ github.event.inputs.application_server_installation == 'true' }}
+        - name: SAP Specific OS Configuration
+          if: ${{ github.event.inputs.sap_os_configuration == 'true' }}
           uses: ./.github/actions/run-ansible
           with:
-            displayName: "Application Server Installation"
+            displayName: "SAP Specific Operating System Configuration"
             SAP_AUTOMATION_REPO_PATH: ${{ env.SAP_AUTOMATION_REPO_PATH }}
             APPLICATION_CONFIGURATION_NAME: ${{ vars.APPLICATION_CONFIGURATION_NAME }}
             CONTROL_PLANE_SUBSCRIPTION_ID: ${{ steps.preparation.outputs.CP_SUBSCRIPTION }}
             CONTROL_PLANE_NAME: ${{ vars.CONTROL_PLANE_NAME }}
             USE_MSI: ${{ env.USE_MSI }}
-            ansibleFilePath: ${{ env.SAP_AUTOMATION_REPO_PATH }}/deploy/ansible/playbook_05_03_sap_app_install.yaml
+            ansibleFilePath: ${{ env.SAP_AUTOMATION_REPO_PATH }}/deploy/ansible/playbook_02_os_sap_specific_config.yaml
             ansibleConfigPath: ${{ env.SAP_AUTOMATION_REPO_PATH }}/deploy/ansible/ansible.cfg
             secretName: ${{ steps.preparation.outputs.SSH_KEY_NAME }}
             passwordSecretName: ${{ steps.preparation.outputs.PASSWORD_KEY_NAME }}
@@ -225,17 +235,17 @@
             azureSubscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
 
-        - name: Web Dispatcher Installation
-          if: ${{ github.event.inputs.webdispatcher_installation == 'true' }}
+        - name: SAP Software download
+          if: ${{ github.event.inputs.bom_processing == 'true' }}
           uses: ./.github/actions/run-ansible
           with:
-            displayName: "Web Dispatcher Installation"
+            displayName: "Software download"
             SAP_AUTOMATION_REPO_PATH: ${{ env.SAP_AUTOMATION_REPO_PATH }}
             APPLICATION_CONFIGURATION_NAME: ${{ vars.APPLICATION_CONFIGURATION_NAME }}
             CONTROL_PLANE_SUBSCRIPTION_ID: ${{ steps.preparation.outputs.CP_SUBSCRIPTION }}
             CONTROL_PLANE_NAME: ${{ vars.CONTROL_PLANE_NAME }}
             USE_MSI: ${{ env.USE_MSI }}
-            ansibleFilePath: ${{ env.SAP_AUTOMATION_REPO_PATH }}/deploy/ansible/playbook_05_04_sap_web_install.yaml
+            ansibleFilePath: ${{ env.SAP_AUTOMATION_REPO_PATH }}/deploy/ansible/playbook_03_bom_processing.yaml
             ansibleConfigPath: ${{ env.SAP_AUTOMATION_REPO_PATH }}/deploy/ansible/ansible.cfg
             secretName: ${{ steps.preparation.outputs.SSH_KEY_NAME }}
             passwordSecretName: ${{ steps.preparation.outputs.PASSWORD_KEY_NAME }}

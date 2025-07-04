@@ -4,7 +4,7 @@
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
 
-name:                                        03 - SAP SID Infrastructure deployment
+name:                                        04 - SAP SID Infrastructure deployment
 run-name:                                    SAP SID Infrastructure by @${{ github.actor }}
 
 on:

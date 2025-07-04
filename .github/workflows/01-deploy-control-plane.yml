@@ -72,17 +72,17 @@ jobs:
         if:                                  ${{ vars.USE_MSI != 'true' }}
         uses:                                Azure/Login@v2
         with:
-          client-id:                         ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id:                         ${{ vars.AZURE_TENANT_ID }}
-          subscription-id:                   ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          client-id:                         ${{ vars.ARM_CLIENT_ID }}
+          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
+          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name:                                Azure Login with initial Service Principal to create the self-hosted runner
         if:                                  ${{ vars.USE_MSI == 'true' }}
         uses:                                Azure/Login@v2
         with:
-          client-id:                         ${{ vars.AZURE_SPN_CLIENT_ID }}
-          tenant-id:                         ${{ vars.AZURE_TENANT_ID }}
-          subscription-id:                   ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          client-id:                         ${{ vars.ARM_SPN_CLIENT_ID }}
+          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
+          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name:                                Prepare Control Plane
         id:                                  prepare_control_plane
@@ -95,13 +95,13 @@ jobs:
           APPLICATION_CONFIGURATION_NAME:    ${{ vars.APPLICATION_CONFIGURATION_NAME }}
           FORCE_RESET:                       ${{ inputs.force_reset }}
           IS_PIPELINE_DEPLOYMENT:            true
-          ARM_CLIENT_ID:                     ${{ vars.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET:                 ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID:               ${{ vars.AZURE_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID:                     ${{ vars.AZURE_TENANT_ID }}
+          ARM_CLIENT_ID:                     ${{ vars.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET:                 ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID:               ${{ vars.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID:                     ${{ vars.ARM_TENANT_ID }}
           WEB_APP_CLIENT_SECRET:             ${{ secrets.WEB_APP_CLIENT_SECRET }}
           TF_VAR_agent_pool:                 'Default'
-          TF_VAR_spn_id:                     ${{ vars.AZURE_CLIENT_ID }}
+          TF_VAR_spn_id:                     ${{ vars.ARM_CLIENT_ID }}
           TF_VAR_ansible_core_version:       ${{ env.ANSIBLE_CORE_VERSION }}
           TF_VAR_tf_version:                 ${{ env.TF_VERSION }}
           TF_VAR_app_registration_app_id:    ${{ vars.APP_REGISTRATION_APP_ID }}
@@ -138,16 +138,16 @@ jobs:
         uses:                                Azure/login@v2
         with:
           auth-type:                         IDENTITY
-          tenant-id:                         ${{ vars.AZURE_TENANT_ID }}
-          subscription-id:                   ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
+          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name:                                Azure Login with Service Principal
         if:                                  ${{ vars.USE_MSI != 'true' }}
         uses:                                Azure/Login@v2
         with:
-          client-id:                         ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id:                         ${{ vars.AZURE_TENANT_ID }}
-          subscription-id:                   ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          client-id:                         ${{ vars.ARM_CLIENT_ID }}
+          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
+          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name:                                Parameter Validation
         id:                                  parameter_validation
@@ -157,13 +157,13 @@ jobs:
         env:
           APPLICATION_CONFIGURATION_NAME:    ${{ vars.APPLICATION_CONFIGURATION_NAME }}
           APP_TOKEN:                         ${{ steps.get_workflow_token.outputs.token }}
-          ARM_SUBSCRIPTION_ID:               ${{ vars.AZURE_SUBSCRIPTION_ID }}
-          CLIENT_ID:                         ${{ vars.AZURE_CLIENT_ID }}
-          CLIENT_SECRET:                     ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID:               ${{ vars.ARM_SUBSCRIPTION_ID }}
+          CLIENT_ID:                         ${{ vars.ARM_CLIENT_ID }}
+          CLIENT_SECRET:                     ${{ secrets.ARM_CLIENT_SECRET }}
           CONTROL_PLANE_NAME:                ${{ inputs.control_plane_name }}
           DEPLOYER_KEYVAULT:                 ${{ vars.DEPLOYER_KEYVAULT }}
-          OBJECT_ID:                         ${{ vars.AZURE_OBJECT_ID }}
-          TENANT_ID:                         ${{ vars.AZURE_TENANT_ID }}
+          OBJECT_ID:                         ${{ vars.ARM_OBJECT_ID }}
+          TENANT_ID:                         ${{ vars.ARM_TENANT_ID }}
           TF_VAR_agent_pool:                 'Default'
           TF_VAR_ansible_core_version:       ${{ env.ANSIBLE_CORE_VERSION }}
           TF_VAR_app_registration_app_id:    ${{ vars.APP_REGISTRATION_APP_ID }}
@@ -211,16 +211,16 @@ jobs:
         uses:                                Azure/login@v2
         with:
           auth-type:                         IDENTITY
-          tenant-id:                         ${{ vars.AZURE_TENANT_ID }}
-          subscription-id:                   ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
+          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name:                                Azure Login with Service Principal
         if:                                  ${{ vars.USE_MSI != 'true' }}
         uses:                                Azure/Login@v2
         with:
-          client-id:                         ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id:                         ${{ vars.AZURE_TENANT_ID }}
-          subscription-id:                   ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          client-id:                         ${{ vars.ARM_CLIENT_ID }}
+          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
+          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name:                                Deploy Control Plane
         run:                                 |
@@ -230,22 +230,22 @@ jobs:
         env:
           APPLICATION_CONFIGURATION_NAME:    ${{ vars.APPLICATION_CONFIGURATION_NAME }}
           APP_TOKEN:                         ${{ steps.get_workflow_token.outputs.token }}
-          CLIENT_ID:                         ${{ vars.AZURE_CLIENT_ID }}
-          CLIENT_SECRET:                     ${{ secrets.AZURE_CLIENT_SECRET }}
+          CLIENT_ID:                         ${{ vars.ARM_CLIENT_ID }}
+          CLIENT_SECRET:                     ${{ secrets.ARM_CLIENT_SECRET }}
           CONTROL_PLANE_NAME:                ${{ inputs.control_plane_name }}
           DEPLOYER_KEYVAULT:                 ${{ vars.DEPLOYER_KEYVAULT }}
           APP_REGISTRATION_APP_ID:           ${{ vars.APP_REGISTRATION_APP_ID }}
           DEPLOYER_TFSTATE_KEY:              "${{ inputs.control_plane_name }}-INFRASTRUCTURE.terraform.tfstate"
           FORCE_RESET:                       ${{ inputs.force_reset }}
           IS_PIPELINE_DEPLOYMENT:            true
-          OBJECT_ID:                         ${{ vars.AZURE_OBJECT_ID }}
-          ARM_SUBSCRIPTION_ID:               ${{ vars.AZURE_SUBSCRIPTION_ID }}
-          TENANT_ID:                         ${{ vars.AZURE_TENANT_ID }}
+          OBJECT_ID:                         ${{ vars.ARM_OBJECT_ID }}
+          ARM_SUBSCRIPTION_ID:               ${{ vars.ARM_SUBSCRIPTION_ID }}
+          TENANT_ID:                         ${{ vars.ARM_TENANT_ID }}
           TF_VAR_tf_version:                 ${{ env.TF_VERSION }}
           TF_VAR_agent_pool:                 'Default'
           TF_VAR_ansible_core_version:       ${{ env.ANSIBLE_CORE_VERSION }}
           TF_VAR_app_registration_app_id:    ${{ vars.APP_REGISTRATION_APP_ID }}
-          TF_VAR_subscription_id:            ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_subscription_id:            ${{ vars.ARM_SUBSCRIPTION_ID }}
           TF_VAR_github_app_token:           ${{ steps.get_workflow_token.outputs.token }}
           tf_version:                        ${{ env.TF_VERSION }}
           TF_VAR_use_spn:                    ${{ vars.USE_MSI }}
@@ -283,16 +283,16 @@ jobs:
         uses:                                Azure/login@v2
         with:
           auth-type:                         IDENTITY
-          tenant-id:                         ${{ vars.AZURE_TENANT_ID }}
-          subscription-id:                   ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
+          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name:                                Azure Login with Service Principal
         if:                                  ${{ vars.USE_MSI != 'true' }}
         uses:                                Azure/Login@v2
         with:
-          client-id:                         ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id:                         ${{ vars.AZURE_TENANT_ID }}
-          subscription-id:                   ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          client-id:                         ${{ vars.ARM_CLIENT_ID }}
+          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
+          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name:                                Deploy Web App
         uses:                                azure/webapps-deploy@v2

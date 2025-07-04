@@ -5,7 +5,7 @@
   # |                                                                            |
   # +------------------------------------4--------------------------------------*/
 
-  name: SAP SCS & DB Installation
+  name: 6.2 - SAP SCS & DB Installation
   run-name: SAP SCS & DB Installation by @${{ github.actor }}
 
   on:

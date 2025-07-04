@@ -4,7 +4,7 @@
 # |                                                                            |
 # +------------------------------------4--------------------------------------*/
 
-name:                                        02 - Deploy SAP Workload Zone
+name:                                        03 - Deploy SAP Workload Zone
 run-name:                                    Deploy SAP Workload Zone by @${{ github.actor }}
 
 on:

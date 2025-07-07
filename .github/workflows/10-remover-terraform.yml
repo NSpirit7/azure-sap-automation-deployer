@@ -71,9 +71,13 @@ jobs:
         if:                                  ${{ vars.USE_MSI != 'true' }}
         uses:                                Azure/Login@v2
         with:
-          client-id:                         ${{ vars.ARM_CLIENT_ID }}
-          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
-          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
+          creds:                             |
+            {
+                                              "clientId": "${{ vars.ARM_CLIENT_ID }}",
+                                              "clientSecret": "${{ secrets.ARM_CLIENT_SECRET }}",
+                                              "subscriptionId": "${{ vars.ARM_SUBSCRIPTION_ID }}",
+                                              "tenantId": "${{ vars.ARM_TENANT_ID }}"
+            }
 
       - name:                                Configure Git Safe Directory
         run:                                 |
@@ -128,9 +132,13 @@ jobs:
         if:                                  ${{ vars.USE_MSI != 'true' }}
         uses:                                Azure/Login@v2
         with:
-          client-id:                         ${{ vars.ARM_CLIENT_ID }}
-          tenant-id:                         ${{ vars.ARM_TENANT_ID }}
-          subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
+          creds:                             |
+            {
+                                              "clientId": "${{ vars.ARM_CLIENT_ID }}",
+                                              "clientSecret": "${{ secrets.ARM_CLIENT_SECRET }}",
+                                              "subscriptionId": "${{ vars.ARM_SUBSCRIPTION_ID }}",
+                                              "tenantId": "${{ vars.ARM_TENANT_ID }}"
+            }
 
       - name:                                Configure Git Safe Directory
         run:                                 |

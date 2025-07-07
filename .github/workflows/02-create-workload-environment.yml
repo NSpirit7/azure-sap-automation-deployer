@@ -102,8 +102,9 @@ jobs:
           git pull --rebase origin main
           git push origin main
 
-          # Set secrets
-          gh secret set ARM_CLIENT_SECRET --body "${{ secrets.ARM_CLIENT_SECRET }}" --env ${workload_config_environment_name}
+          if [[ "${{ vars.USE_MSI }}" != "true" ]]; then
+            gh secret set ARM_CLIENT_SECRET --body "${{ secrets.ARM_CLIENT_SECRET }}" --env ${workload_config_environment_name}
+          fi
 
           # Set variables
           gh variable set ARM_CLIENT_ID --body "${{ vars.ARM_CLIENT_ID }}" --env ${workload_config_environment_name}

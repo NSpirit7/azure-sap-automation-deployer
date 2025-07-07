@@ -58,7 +58,8 @@ jobs:
       - name:                                Checkout
         uses:                                actions/checkout@v4
         with:
-          token:                             ${{ steps.get_workflow_token.outputs.token }}
+          fetch-depth:                       0
+          token:                             ${{ secrets.GITHUB_TOKEN }}
 
       - name:                                Create GitHub Workload Environment
         env:
@@ -98,7 +99,8 @@ jobs:
 
           git add WORKSPACES
           git commit -m "Add WORKSPACES for ${workload_config_name^^}"
-          git push
+          git pull --rebase origin main
+          git push origin main
 
           # Set secrets
           gh secret set ARM_CLIENT_SECRET --body "${{ secrets.ARM_CLIENT_SECRET }}" --env ${workload_config_environment_name}

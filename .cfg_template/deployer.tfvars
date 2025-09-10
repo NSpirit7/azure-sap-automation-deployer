@@ -207,7 +207,7 @@ deployer_image = {
 
 enable_purge_control_for_keyvaults = false
 
-enable_rbac_authorization_for_keyvault = true
+enable_rbac_authorization = true
 
 # List of object IDs to add to key vault policies"
 #additional_users_to_add_to_keyvault_policies=["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy"]

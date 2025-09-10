@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       control_plane_name:
-        description:                         'Control Plane Name, use the following syntax: ENV-LOCA-VNET'
+        description:                         'Control Plane configuration name, use the following syntax: ENV-LOCA-VNET'
         required:                            true
         type:                                environment
       force_reset:
@@ -20,7 +20,7 @@ on:
         type:                                boolean
         default:                             false
       test:
-        description:                         'Only run terraform plan'
+        description:                         'Only run Terraform plan'
         required:                            false
         type:                                boolean
         default:                             false
@@ -107,6 +107,7 @@ jobs:
           TF_VAR_app_registration_app_id:    ${{ vars.APP_REGISTRATION_APP_ID }}
           APP_TOKEN:                         ${{ steps.get_workflow_token.outputs.token }}
           TF_VAR_github_app_token:           ${{ steps.get_workflow_token.outputs.token }}
+          ZONE:                              ${{ inputs.control_plane_name }}
 
   populate-keyvault:
     name:                                    Save Deployment Credentials in Azure Keyvault
@@ -124,6 +125,11 @@ jobs:
           fetch-depth:                       0
           ref:                               ${{ github.ref }}
           clean:                             true
+
+      - name:                                Configure Git Safe Directory
+        run:                                 |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "/__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}"
 
       - name:                                Get app token
         id:                                  get_workflow_token
@@ -169,12 +175,12 @@ jobs:
           APPLICATION_CONFIGURATION_NAME:    ${{ vars.APPLICATION_CONFIGURATION_NAME }}
           APP_TOKEN:                         ${{ steps.get_workflow_token.outputs.token }}
           ARM_SUBSCRIPTION_ID:               ${{ vars.ARM_SUBSCRIPTION_ID }}
-          CLIENT_ID:                         ${{ vars.ARM_CLIENT_ID }}
-          CLIENT_SECRET:                     ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_CLIENT_ID:                     ${{ vars.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET:                 ${{ secrets.ARM_CLIENT_SECRET }}
           CONTROL_PLANE_NAME:                ${{ inputs.control_plane_name }}
           DEPLOYER_KEYVAULT:                 ${{ vars.DEPLOYER_KEYVAULT }}
-          OBJECT_ID:                         ${{ vars.ARM_OBJECT_ID }}
-          TENANT_ID:                         ${{ vars.ARM_TENANT_ID }}
+          ARM_OBJECT_ID:                     ${{ vars.ARM_OBJECT_ID }}
+          ARM_TENANT_ID:                     ${{ vars.ARM_TENANT_ID }}
           TF_VAR_agent_pool:                 'Default'
           TF_VAR_ansible_core_version:       ${{ env.ANSIBLE_CORE_VERSION }}
           TF_VAR_app_registration_app_id:    ${{ vars.APP_REGISTRATION_APP_ID }}
@@ -191,8 +197,8 @@ jobs:
     container:
       image:                                 ghcr.io/nnoaman/sap-automation:sdaf-github-actions
     outputs:
-      HAS_WEBAPP:                            ${{ steps.get_webapp_variables.outputs.HAS_WEBAPP }}
-      APPSERVICE_NAME:                       ${{ steps.get_webapp_variables.outputs.APPSERVICE_NAME }}
+      HAS_WEBAPP:                            ${{ steps.deploy_control_plane.outputs.HAS_WEBAPP }}
+      APPSERVICE_NAME:                       ${{ steps.deploy_control_plane.outputs.APPSERVICE_NAME }}
 
     steps:
 
@@ -234,6 +240,7 @@ jobs:
           subscription-id:                   ${{ vars.ARM_SUBSCRIPTION_ID }}
 
       - name:                                Deploy Control Plane
+        id:                                  deploy_control_plane
         run:                                 |
           echo "Running control plane deployment"
           cd ${SAP_AUTOMATION_REPO_PATH}
@@ -259,8 +266,9 @@ jobs:
           TF_VAR_subscription_id:            ${{ vars.ARM_SUBSCRIPTION_ID }}
           TF_VAR_github_app_token:           ${{ steps.get_workflow_token.outputs.token }}
           tf_version:                        ${{ env.TF_VERSION }}
-          TF_VAR_use_spn:                    ${{ vars.USE_MSI }}
           USE_MSI:                           ${{ vars.USE_MSI }}
+          ARM_USE_MSI:                       ${{ vars.USE_MSI }}
+          ZONE:                              ${{ inputs.control_plane_name }}
 
   deploy-web-app:
     name:                                    Deploy SAP Configuration Web App

@@ -15,6 +15,14 @@ on:
         description: "Deployer VNet"
         required: true
         default: "DEP01"
+      use_msi:
+        description: "Use Managed Identity"
+        required: true
+        default: "false"
+      msi_id:
+        description: "Managed Identity ID"
+        required: true
+        default: ""
 
 permissions:
   issues: write
@@ -26,7 +34,7 @@ jobs:
     name: Create environment
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/nnoaman/sap-automation:github_actions
+      image: ghcr.io/nnoaman/sap-automation:sdaf-github-actions
     steps:
       - name: Get app token
         id: get_workflow_token
@@ -48,6 +56,8 @@ jobs:
           environment=${{ github.event.inputs.environment }}
           region=${{ github.event.inputs.region }}
           deployer_vnet=${{ github.event.inputs.deployer_vnet }}
+          use_msi=${{ github.event.inputs.use_msi }}
+          msi_id=${{ github.event.inputs.msi_id }}
 
           pushd /source/deploy/terraform/terraform-units/modules/sap_namegenerator
           region_map=$(echo var.region_mapping.${region} | terraform console | tr -d '"')
@@ -77,6 +87,11 @@ jobs:
             | sed "s|@@VNET@@|${deployer_vnet}|g" \
             | sed "s|@@REGION_DISPLAY_NAME@@|${region}|g" \
             > WORKSPACES/DEPLOYER/${deployer_name^^}/${deployer_name^^}.tfvars
+
+          if [ "${use_msi}" = "true" ]; then
+            sed -i "s|#user_assigned_identity_id=\".*\"|user_assigned_identity_id=\"${msi_id}\"|g" \
+              WORKSPACES/DEPLOYER/${deployer_name^^}/${deployer_name^^}.tfvars
+          fi
 
           cat .cfg_template/library.tfvars \
             | sed "s|@@ENV@@|${environment}|g" \

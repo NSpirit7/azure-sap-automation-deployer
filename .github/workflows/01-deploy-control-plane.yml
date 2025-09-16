@@ -41,7 +41,7 @@ jobs:
     environment:                             ${{ inputs.control_plane_name }}
     runs-on:                                 ubuntu-latest
     container:
-      image:                                 ghcr.io/nnoaman/sap-automation:sdaf-github-actions
+      image:                                 ${{ vars.DOCKER_IMAGE }}
     outputs:
       this_agent:                            ${{ steps.prepare_control_plane.outputs.this_agent }}
       deployer_keyvault:                     ${{ steps.prepare_control_plane.outputs.deployer_keyvault }}
@@ -115,7 +115,7 @@ jobs:
     needs:                                   prepare-deployer
     runs-on:                                 self-hosted
     container:
-      image:                                 ghcr.io/nnoaman/sap-automation:sdaf-github-actions
+      image:                                 ${{ vars.DOCKER_IMAGE }}
 
     steps:
       - name:                                Checkout the code
@@ -195,7 +195,7 @@ jobs:
     needs:                                   [prepare-deployer, populate-keyvault]
     runs-on:                                 self-hosted
     container:
-      image:                                 ghcr.io/nnoaman/sap-automation:sdaf-github-actions
+      image:                                 ${{ vars.DOCKER_IMAGE }}
     outputs:
       HAS_WEBAPP:                            ${{ steps.deploy_control_plane.outputs.HAS_WEBAPP }}
       APPSERVICE_NAME:                       ${{ steps.deploy_control_plane.outputs.APPSERVICE_NAME }}

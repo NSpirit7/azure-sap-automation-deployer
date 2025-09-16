@@ -21,7 +21,7 @@ on:
         default: "false"
       msi_id:
         description: "Managed Identity ID"
-        required: true
+        required: false
         default: ""
 
 permissions:
@@ -34,7 +34,7 @@ jobs:
     name: Create environment
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/nnoaman/sap-automation:sdaf-github-actions
+      image: ${{ vars.DOCKER_IMAGE }}
     steps:
       - name: Get app token
         id: get_workflow_token

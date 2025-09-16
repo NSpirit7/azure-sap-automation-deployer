@@ -38,7 +38,7 @@ jobs:
     environment:                             ${{ inputs.control_plane_name }}
     runs-on:                                 self-hosted
     container:
-      image:                                 ghcr.io/nnoaman/sap-automation:sdaf-github-actions
+      image:                                 ${{ vars.DOCKER_IMAGE }}
 
     steps:
       - name:                                Checkout the code
@@ -107,7 +107,7 @@ jobs:
 
     runs-on:                                 ubuntu-latest
     container:
-      image:                                 ghcr.io/nnoaman/sap-automation:sdaf-github-actions
+      image:                                 ${{ vars.DOCKER_IMAGE }}
 
     steps:
       - name:                                Checkout the code

@@ -41,7 +41,7 @@ jobs:
     environment:                             ${{ inputs.workload_zone }}
     runs-on:                                 self-hosted
     container:
-      image:                                 ghcr.io/nnoaman/sap-automation:sdaf-github-actions
+      image:                                 ${{ vars.DOCKER_IMAGE }}
 
     steps:
 

@@ -44,7 +44,7 @@ jobs:
     if:                                      ${{ inputs.cleanup_sap }}
     runs-on:                                 self-hosted
     container:
-      image:                                 ghcr.io/nnoaman/sap-automation:sdaf-github-actions
+      image:                                 ${{ vars.DOCKER_IMAGE }}
 
     steps:
       - name:                                Checkout the code
@@ -105,7 +105,7 @@ jobs:
     if:                                      ${{ inputs.cleanup_workload_zone }}
     runs-on:                                 self-hosted
     container:
-      image:                                 ghcr.io/nnoaman/sap-automation:sdaf-github-actions
+      image:                                 ${{ vars.DOCKER_IMAGE }}
 
     steps:
       - name:                                Checkout the code
